@@ -1,5 +1,6 @@
 package com.inventoryManagement.services;
 
+import com.inventoryManagement.entities.Cart;
 import com.inventoryManagement.entities.PaymentMethod;
 import com.inventoryManagement.entities.User;
 

@@ -34,9 +34,11 @@ public class UserController {
         return userService.getPaymentHistory(id);
     }
 
-    @GetMapping("/disusers")
+    @GetMapping("/get")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
+
+
 
 }

@@ -46,6 +46,18 @@ public class CartServiceImpl implements CartService{
         return cart.getItems();
     }
 
+    @Override
+    public void addItemToCart(Long cartId, Long itemId) {
+        Cart cart = cartRepo.findById(cartId).orElse(null);
+        Item item = itemRepo.findById(itemId).orElse(null);
+
+        if (cart != null && item != null) {
+            itemRepo.save(item);
+            cart.getItems().add(item);
+            cartRepo.save(cart);
+        }
+    }
+
 //    @Override
 //    public Item addItemToCart(Long cartId, Item item) {
 //        Cart cart= cartRepo.findById(cartId)
@@ -73,25 +85,13 @@ public class CartServiceImpl implements CartService{
     }
 
 
-    public void addItemToCart(Long cartId, Long itemId) {
-        Cart cart = cartRepo.findById(cartId).orElse(null);
-        Item item = itemRepo.findById(itemId).orElse(null);
-
-        if (cart != null && item != null) {
-            itemRepo.save(item);
-            cart.getItems().add(item);
-            cartRepo.save(cart);
-        }
-    }
-
-
     @Override
     public void calculateTotalPriceAndSavePayment(Long cartId) {
         Cart cart = cartRepo.findById(cartId).orElseThrow(() -> new EntityNotFoundException("Cart not found"));
 
         double total_price = 0.0;
         for (Item item : cart.getItems()) {
-            total_price += item.getPrice();
+            total_price = cart.getQuantity() * item.getPrice();
         }
 
         PaymentMethod payment = cart.getPaymentMethod();
@@ -100,9 +100,12 @@ public class CartServiceImpl implements CartService{
             cart.setPaymentMethod(payment);
         }
 
+
         payment.setTotal_price(BigDecimal.valueOf(total_price));
         payment.setPayment_date(Date.valueOf((LocalDate.now())));
         payment.setCart(cart);
+        payment.setCart_number(Math.toIntExact(cart.getCart_number()));
+
         paymentMethodRepo.save(payment);
     }
 

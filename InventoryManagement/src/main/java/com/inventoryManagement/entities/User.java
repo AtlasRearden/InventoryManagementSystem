@@ -1,8 +1,8 @@
 package com.inventoryManagement.entities;
 
+
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
 
 @Entity
@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class User {
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +26,12 @@ public class User {
     private String email;
     @Column(name="password")
     private String password;
+    private String roles;
 
-    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
     private List<Cart> carts;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="admin_id",referencedColumnName = "admin_id")
     private Admin admin;
 

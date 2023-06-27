@@ -14,8 +14,6 @@ import java.util.List;
 public interface CartService {
     Cart createCart(Cart cart);
 
-
-
     List<Item> getItemsInCart(Long cartId);
 
     void addItemToCart(Long cartId, Long itemId);
@@ -25,6 +23,7 @@ public interface CartService {
     Cart addPaymentToCart(Long cartId, PaymentMethod payment) throws ChangeSetPersister.NotFoundException;
 
     List<Cart> getAllCarts();
+
 
     void calculateTotalPriceAndSavePayment(Long cartId);
 }

@@ -21,7 +21,7 @@ public class Cart{
     private Long cart_id;
     @Column(name="quantity")
     private double quantity;
-    @Column(name="cart_number", unique = true)
+    @Column(name="cart_number")
     private Long cart_number;
 
 
@@ -32,7 +32,7 @@ public class Cart{
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "cart_item",
-            joinColumns = {@JoinColumn(name = "cart_id", referencedColumnName = "cart_id"),
+            joinColumns = {@JoinColumn(name = "cart_number", referencedColumnName = "cart_number"),
                     @JoinColumn(name = "quantity", referencedColumnName = "quantity")},
                     inverseJoinColumns=@JoinColumn(name = "item_id", referencedColumnName = "item_id")
     )

@@ -8,6 +8,7 @@ import com.inventoryManagement.repository.UserRepo;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,10 @@ public class AdminServiceImpl implements AdminService{
     @Autowired
     private final UserService userService;
 
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public Admin createAdmin(Admin admin) {
         return adminRepo.save(admin);
@@ -40,10 +45,23 @@ public class AdminServiceImpl implements AdminService{
 
         if (admin != null) {
             user.setAdmin(admin);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepo.save(user);
         }
 
         return null;
+    }
+
+    public String addAdmin(Admin admin){
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        adminRepo.save(admin);
+        return "admin added";
+    }
+
+    public String addUser(User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepo.save(user);
+        return "user added";
     }
 
     @Override

@@ -4,6 +4,7 @@ package com.inventoryManagement.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,9 +29,10 @@ public class PaymentMethod{
     @Column(name="payment_date")
     private Date payment_date;
 
+    private int cart_number;
+
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="cart_number",referencedColumnName = "cart_number")
     private Cart cart;
 
 }

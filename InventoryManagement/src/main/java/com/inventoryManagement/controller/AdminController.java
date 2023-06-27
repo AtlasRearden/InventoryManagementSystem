@@ -6,8 +6,10 @@ import com.inventoryManagement.entities.User;
 import com.inventoryManagement.services.AdminServiceImpl;
 import com.inventoryManagement.services.UserServiceImpl;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.util.PerformanceSensitive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +41,16 @@ public class AdminController {
     @GetMapping("/displayU")
     public List<User> getAllUsers(){
         return adminService.getAllUsers();
+    }
+
+    @PostMapping("/new")
+    public String addNewUser(@RequestBody User user){
+        return adminService.addUser(user);
+    }
+
+    @PostMapping("/ad")
+    public String addNewAdmin(@RequestBody Admin admin){
+        return adminService.addAdmin(admin);
     }
 
     @PostMapping

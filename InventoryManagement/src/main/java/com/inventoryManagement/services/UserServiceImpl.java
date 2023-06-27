@@ -1,13 +1,13 @@
 package com.inventoryManagement.services;
 
 import com.inventoryManagement.entities.Cart;
-import com.inventoryManagement.entities.Item;
 import com.inventoryManagement.entities.PaymentMethod;
 import com.inventoryManagement.entities.User;
 import com.inventoryManagement.repository.CartRepo;
 import com.inventoryManagement.repository.PaymentMethodRepo;
 import com.inventoryManagement.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,8 +29,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepo userRepo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
     @Override
     public User createUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
@@ -59,5 +64,6 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
+
 
 }

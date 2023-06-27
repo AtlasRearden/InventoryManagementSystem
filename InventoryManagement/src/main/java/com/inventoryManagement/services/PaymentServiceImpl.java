@@ -1,7 +1,5 @@
 package com.inventoryManagement.services;
 
-import com.inventoryManagement.entities.Cart;
-import com.inventoryManagement.entities.Item;
 import com.inventoryManagement.entities.PaymentMethod;
 import com.inventoryManagement.exceptions.CartNotFoundException;
 import com.inventoryManagement.repository.CartRepo;
