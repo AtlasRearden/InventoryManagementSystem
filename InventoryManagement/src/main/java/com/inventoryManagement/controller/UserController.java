@@ -1,21 +1,16 @@
 package com.inventoryManagement.controller;
 
-
-import com.inventoryManagement.entities.Cart;
-import com.inventoryManagement.entities.Item;
 import com.inventoryManagement.entities.PaymentMethod;
 import com.inventoryManagement.entities.User;
 import com.inventoryManagement.repository.UserRepo;
-import com.inventoryManagement.services.PaymentServiceImpl;
 import com.inventoryManagement.services.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @ResponseBody
@@ -39,6 +34,27 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @PostMapping("/admin")
+    public User createAdmin(@RequestBody User adminUser){
+        return userService.createAdmin(adminUser);
+    }
+
+    @PostMapping("/{adminUser}/usr")
+    public ResponseEntity<User> createUserByAdmin(@PathVariable User adminUser, @RequestBody User newUser) {
+        User createdUser = userService.createUserByAdmin(adminUser, newUser);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/del/{id}")
+    public void deleteUser(@PathVariable Long id){
+       userService.deleteUser(id);
+    }
+
+    @GetMapping("/adminEmail")
+    public ResponseEntity<User> findAdminByEmail(@RequestParam("email") String email) {
+        User adminUsers = userService.findByEmailAndIsAdmin(email, true);
+        return ResponseEntity.ok(adminUsers);
+    }
 
 
 }

@@ -3,6 +3,7 @@ package com.inventoryManagement.services;
 import com.inventoryManagement.entities.Cart;
 import com.inventoryManagement.entities.PaymentMethod;
 import com.inventoryManagement.entities.User;
+import com.inventoryManagement.exceptions.UnauthorizedException;
 import com.inventoryManagement.repository.CartRepo;
 import com.inventoryManagement.repository.PaymentMethodRepo;
 import com.inventoryManagement.repository.UserRepo;
@@ -58,6 +59,36 @@ public class UserServiceImpl implements UserService {
         return paymentHistory;
 
     }
+
+    @Override
+    public User findByEmailAndIsAdmin(String email, boolean isAdmin) {
+        User adminUser = userRepo.findByEmailAndIsAdmin(email,isAdmin);
+        return adminUser;
+    }
+
+    @Override
+    public User createUserByAdmin(User adminUser, User newUser) {
+        if (!adminUser.isAdmin()) {
+            throw new UnauthorizedException("Only admin can create new users.");
+        }
+
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+
+        return userRepo.save(newUser);
+    }
+
+    @Override
+    public User createAdmin(User adminUser) {
+        if (!adminUser.isAdmin()) {
+            throw new UnauthorizedException("Only admin can create new users.");
+        }
+
+        // Encrypt the password before saving
+        adminUser.setPassword(passwordEncoder.encode(adminUser.getPassword()));
+
+        return userRepo.save(adminUser);
+    }
+
 
 
     @Override

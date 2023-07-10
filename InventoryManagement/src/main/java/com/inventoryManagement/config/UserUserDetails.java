@@ -1,10 +1,14 @@
 package com.inventoryManagement.config;
 
 
+import com.inventoryManagement.auth.Role;
 import com.inventoryManagement.entities.User;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,18 +17,22 @@ import java.util.stream.Collectors;
 
 public class UserUserDetails implements UserDetails {
 
-    private final String username;
+    private final String email;
     private final String password;
     private List<GrantedAuthority> authorities;
 
-    public UserUserDetails(User user) {
-        username = user.getName();
-        password = user.getPassword();
-        authorities = Arrays.stream(user.getRoles().split(","))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
+//    @Enumerated(EnumType.STRING)
+//    private Role role;
 
+    public UserUserDetails(User user) {
+        email = user.getEmail();
+        password = user.getPassword();
+//        authorities = Arrays.stream(user.getRoles().split(","))
+//                .map(SimpleGrantedAuthority::new)
+//                .collect(Collectors.toList());
+
+
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -37,7 +45,7 @@ public class UserUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

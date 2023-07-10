@@ -13,4 +13,11 @@ public interface UserService {
 
     List<User> getAllUsers();
     List<PaymentMethod> getPaymentHistory(Long id);
+    User findByEmailAndIsAdmin(String email, boolean isAdmin);
+
+    User createUserByAdmin(User adminUser, User newUser);
+
+    User createAdmin(User adminUser);
+
+
 }

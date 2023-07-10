@@ -1,8 +1,8 @@
 package com.inventoryManagement.config;
 
-import com.inventoryManagement.services.AdminAdminDetailsService;
 import com.inventoryManagement.services.UserUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,24 +19,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+@Setter
+public class SecurityConfig{
+
+    private final JwtAuthenticationFilter filter;
+
+
 
     @Autowired
-    private JwtAuthenticationEntryPoint point;
-    @Autowired
-    private JwtAuthenticationFilter filter;
+    private UserUserDetailsService userDetailsService;
+
+
+
     @Bean
-    public UserDetailsService userDetailsService(){
-
-
+    public UserDetailsService service(PasswordEncoder encoder) {
         return new UserUserDetailsService();
-    }
-    @Bean
-    public UserDetailsService service(PasswordEncoder encoder){
-        return new AdminAdminDetailsService();
     }
 
 
@@ -44,34 +46,44 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors->cors.disable())
+                .cors(cors -> cors.disable())
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/auth/login","/auth/token","/auth/validate").permitAll()
+                        .requestMatchers("/auth/user/login", "auth/admin/login","/auth/token", "/auth/validate", "/auth/admin/login").permitAll()
                 )
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/main/{admin_id}/usr").permitAll()
+                        .requestMatchers("/user/{adminUser}/usr", "/cart","/cart/{cartId}/tp").permitAll()
                 )
-                .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/main").permitAll()
+
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/user/**").permitAll()
                 )
-                .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/user/**").authenticated()
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/item/**","/del/{id}").hasRole("ADMIN")
                 )
-//                .authorizeHttpRequests((auth)->auth
-//                        .requestMatchers("/main/")
-//                )
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(point))
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-                );
-        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                )
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
 
     }
+
+
+
+//    @Bean
+//    public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager());
+//        filter.setFilter(this.filter);
+//        return filter;
+//    }
+
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
     @Bean
@@ -80,11 +92,33 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
+    @Bean
+    public DaoAuthenticationProvider userAuthenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
 
+//    @Bean
+//    public DaoAuthenticationProvider adminAuthenticationProvider() {
+//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+//        authenticationProvider.setUserDetailsService(adminDetailsService);
+//        authenticationProvider.setPasswordEncoder(passwordEncoder());
+//        return authenticationProvider;
+//    }
+
+//    @Bean
+//    public AuthenticationManager authenticationManager() {
+//        List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
+//        authenticationProviders.add(userAuthenticationProvider());
+//        return new ProviderManager(authenticationProviders);
+//    }
+//
 }

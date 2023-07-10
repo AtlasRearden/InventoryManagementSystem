@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Entity
@@ -28,5 +27,8 @@ public class Item {
     @ManyToMany(mappedBy = "items")
     private List<Cart> cart;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="user_id",referencedColumnName = "user_id")
+    private User user;
 
 }
